@@ -269,10 +269,9 @@
                                 </div>
                                 <div class="panel-body" style="min-height: 355px;">
                                     <div class="row">
-                                        {{--<div class="col-md-12 form-group">
+                                        <div class="col-md-12 form-group">
                                             <label class="radio no-padding-right size-12">
-                                                <input type="radio" value="binga" name="payment_method" required
-                                                     />
+                                                <input type="radio" value="binga" name="payment_method" required />
 
                                                 <i></i>
                                                 <div style="margin-bottom: 10px;">
@@ -284,65 +283,66 @@
                                                         style="text-decoration:underline">cliquez ici</a>. <br>
                                                 </div>
                                                 <div><img src="{{ asset('/images/binga.png')}}" alt="Binga.ma"
-                                        height="50px" /></div>
-                                    </label>
-                                </div>--}}
-                                <div class="col-md-12 form-group">
-                                    <label class="radio no-padding-right size-12">
-                                        <input type="radio" value="mtc" name="payment_method" required />
-                                        <i></i>
-                                        <div style="margin-bottom: 10px;">
-                                            Carte bancaire
+                                                        height="50px" /></div>
+                                            </label>
                                         </div>
-                                        <div><img src="{{ asset('/images/cardCredit.jpg')}}" alt="PAYZONE" />
+                                        <div class="col-md-12 form-group">
+                                            <label class="radio no-padding-right size-12">
+                                                <input type="radio" value="mtc" name="payment_method" required />
+                                                <i></i>
+                                                <div style="margin-bottom: 10px;">
+                                                    Carte bancaire
+                                                </div>
+                                                <div><img src="{{ asset('/images/payzone.png')}}" alt="PAYZONE"
+                                                        height="30px" />
+                                                </div>
+                                            </label>
                                         </div>
-                                    </label>
+                                        <div class="col-md-12 form-group">
+                                            <label class="checkbox no-padding-right size-12">
+                                                <input type="checkbox" value="3" name="radio-condition-3" required />
+                                                <i></i> <a href="{{ route('conditions_generales') }}" target="_blank">Je
+                                                    confirme avoir lu les conditions générales du contrat et exprime par
+                                                    la même occasion mon consentement à les accepter.</a>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-12 form-group">
+                                            <label class="checkbox no-padding-right size-12">
+                                                <input type="checkbox" value="4" name="radio-condition-4" required />
+                                                <i></i> J’ai bien compris la nécessité de retourner le contrat signé
+                                                pour l’obtention de l’attestation de voyage.
+                                            </label>
+                                        </div>
+                                        <div class="col-md-12 form-group text-right">
+                                            <label style="font-size: 19px;">Montant de la réservation : <b
+                                                    style="font-size: 25px;color: #4CAF50;">{{ $data['montant'] }}</b>
+                                                <b style="font-size: 25px;color: #4CAF50;">Dhs</b></label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-12 form-group">
-                                    <label class="checkbox no-padding-right size-12">
-                                        <input type="checkbox" value="3" name="radio-condition-3" required />
-                                        <i></i> <a href="{{ route('conditions_generales') }}" target="_blank">Je
-                                            confirme avoir lu les conditions générales du contrat et exprime par
-                                            la même occasion mon consentement à les accepter.</a>
-                                    </label>
-                                </div>
-                                <div class="col-md-12 form-group">
-                                    <label class="checkbox no-padding-right size-12">
-                                        <input type="checkbox" value="4" name="radio-condition-4" required />
-                                        <i></i> J’ai bien compris la nécessité de retourner le contrat signé
-                                        pour l’obtention de l’attestation de voyage.
-                                    </label>
-                                </div>
-                                <div class="col-md-12 form-group text-right">
-                                    <label style="font-size: 19px;">Montant de la réservation : <b
-                                            style="font-size: 25px;color: #4CAF50;">{{ $data['montant'] }}</b>
-                                        <b style="font-size: 25px;color: #4CAF50;">Dhs</b></label>
+                                <div class="panel-footer" style="background:#fff">
+                                    <div class="row">
+                                        <div class="col-md-3 hidden-xs">
+                                            <a href="{{ route('formulaire') }}/{{ base64_encode($data['id']) }}"
+                                                class="btn btn-danger btn-block"><i class="fa fa-arrow-left"></i>
+                                                MODIFIER </a>
+                                        </div>
+                                        <div class="col-md-6 hidden-xs"></div>
+                                        <div class="col-md-3">
+                                            <input type="hidden" id="assurance_id" name="assurance_id"
+                                                value="{{ $data['id'] }}" />
+                                            <button type="submit" class="btn btn-success btn-block">CONFIRMER <i
+                                                    class="fa fa-arrow-right"></i></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="panel-footer" style="background:#fff">
-                            <div class="row">
-                                <div class="col-md-3 hidden-xs">
-                                    <a href="{{ route('formulaire') }}/{{ base64_encode($data['id']) }}"
-                                        class="btn btn-danger btn-block"><i class="fa fa-arrow-left"></i>
-                                        MODIFIER </a>
-                                </div>
-                                <div class="col-md-6 hidden-xs"></div>
-                                <div class="col-md-3">
-                                    <input type="hidden" id="assurance_id" name="assurance_id"
-                                        value="{{ $data['id'] }}" />
-                                    <button type="submit" class="btn btn-success btn-block">CONFIRMER <i
-                                            class="fa fa-arrow-right"></i></button>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
-
                 </div>
+            </form>
         </div>
-    </div>
-    </form>
-    </div>
     </div>
 </section>
 @endsection

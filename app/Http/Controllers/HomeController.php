@@ -415,51 +415,137 @@ class HomeController extends Controller
 
     public function checkout(Request $request)
     {
-        $cartId = $request['assurance_id'];
+        $cartId =  $request['assurance_id'];
+
         $assurance = Assurance::where('id', $cartId)->first();
-        $total = number_format($assurance['montant'], 2, '.', '') * 100; // Amount in cents
-    
-        // PayZone credentials
-        $connect2pay = "https://paiement.payzone.ma";;
-        $originator  = "2019120958"; // Your originator ID
-        $password    = "OY0FVD4EVGNDL1XFNEDP1OW66WA0N89G!"; // Your password
-    
-        $c2pClient = new Connect2PayClient($connect2pay, $originator, $password);
-    
-        // Set all information for the payment
-        $c2pClient->setOrderID($cartId);
-        $c2pClient->setPaymentMethod(Connect2PayClient::PAYMENT_METHOD_CREDITCARD);
-        $c2pClient->setPaymentMode(Connect2PayClient::PAYMENT_MODE_SINGLE);
-        $c2pClient->setShopperID($assurance['id']);
-        $c2pClient->setShippingType(Connect2PayClient::SHIPPING_TYPE_VIRTUAL);
-        $c2pClient->setCurrency("EUR");
-        $c2pClient->setAmount($total);
-        $c2pClient->setOrderDescription("Payment of " . number_format($total / 100, 2) . " EUR");
-        $c2pClient->setShopperFirstName($assurance['prenom']);
-        $c2pClient->setShopperLastName($assurance['nom']);
-        $c2pClient->setShopperAddress($assurance['addresse']);
-        $c2pClient->setShopperZipcode("NA"); // Assuming no zipcode is available
-        $c2pClient->setShopperCity("NA"); // Assuming no city is available
-        $c2pClient->setShopperCountryCode("504"); // Country code for Morocco
-        $c2pClient->setShopperPhone($assurance['tel']);
-        $c2pClient->setShopperEmail($assurance['email']);
-        $c2pClient->setCtrlCustomData("Custom data example");
-        $c2pClient->setCtrlRedirectURL(route('confirme', base64_encode($assurance['email'])));
-        $c2pClient->setCtrlCallbackURL(route('confirmepayement'));
-    
-        if ($c2pClient->validate()) {
-            if ($c2pClient->preparePayment()) {
-                // Save merchant token in session or database
-                session(['merchantToken' => $c2pClient->getMerchantToken()]);
-    
-                // Redirect the customer to the payment page
-                return redirect($c2pClient->getCustomerRedirectURL());
-            } else {
-                return back()->withErrors(['error' => "Payment preparation error: " . $c2pClient->getClientErrorMessage()]);
-            }
-        } else {
-            return back()->withErrors(['error' => "Validation error: " . $c2pClient->getClientErrorMessage()]);
+        $total = number_format($assurance['montant'], 2, '.', '');
+
+        if ($request['payment_method'] == 'mtc') {
+            //$gateway_url = "https://payment.cmi.co.ma/fim/est3Dgate";
+             $gateway_url = "https://testpayment.cmi.co.ma/fim/est3Dgate";
+            //$storeKey = "MAI+1234+CMI"; //de prod
+            $storeKey = "M0mnoofL2da0J3Z9"; //de test
+            //$orgClientId  = "600000682";//de prod
+            $orgClientId = "600000125"; //de test
+            $orgAmount =  number_format($total, 2, '.', '');
+            $orgOkUrl = route("confirme", base64_encode($assurance['email']));
+            $orgFailUrl = route("formulaire_key", ['error' => 'Malheureusement, votre paiement a été refusé.', 'key' => base64_encode($assurance['id'])]);
+            $shopurl = $orgFailUrl;
+            $orgTransactionType = "PreAuth";
+            $orgRnd =  microtime();
+            $orgCallbackUrl = route("confirmepayement");
+            $orgCurrency = "504";
+            $merchantAccount = 'Wafaimaassistance';
+            $paywallSecretKey = '&ZkKnb-ha3dLQlTZ';
+            $paywallUrl = 'https://payment-sandbox.payzone.ma/pwthree/launch';
+            $notificationKey = 'h9z8OuJm&twBqNiW';
+            
+
+            // $data_payement = array(
+            //     'clientid' => $orgClientId,
+            //     'amount' => $orgAmount,
+            //     'okUrl' => $orgOkUrl,
+            //     'failUrl' => $orgFailUrl,
+            //     'TranType' => $orgTransactionType,
+            //     'callbackUrl' => $orgCallbackUrl,
+            //     'shopurl' => $shopurl,
+            //     'currency' => $orgCurrency,
+            //     'rnd' => $orgRnd,
+            //     'storetype' => '3D_PAY_HOSTING',
+            //     'hashAlgorithm' => 'ver3',
+            //     'lang' => 'fr',
+            //     'refreshtime' => '5',
+            //     'BillToName' => $assurance['prenom'] . ' ' . $assurance['nom'],
+            //     //'BillToCompany' => 'Axa assistance',
+            //     'BillToStreet1' => $assurance['addresse'],
+            //     //'BillToCity' => 'Casablanca',
+            //     //'BillToStateProv' => 'Casablanca',
+            //     //'BillToPostalCode' => '20230',
+            //     'BillToCountry' => '504',
+            //     'email' => $assurance['email'],
+            //     'tel' => $assurance['tel'],
+            //     'encoding' => 'UTF-8',
+            //     'oid' => $cartId
+            // );
+            $data_payement = array(
+                // Authentication parameters
+                'merchantAccount'      => $merchantAccount,
+                'timestamp'       => time(),
+                'skin'        => 'vps-1-vue',
+            
+                // Customer parameters
+                'customerId'      =>  time(), //must be unique for each custumer
+                'customerCountry' => 'MA',	
+                'customerLocale' => 'en_US',		        
+            
+                // Charge parameters
+                'chargeId'        => time(),					// Optional, unless required by the merchant account
+                'orderId'         => time(),
+                'price'           => $orgAmount,
+                'currency'        => 'MAD',
+                'description'     => 'A Big Hat',
+                'displayCurrency' => 'EUR',
+                'displayPrice'    => '10',
+            
+                // Deep linking
+                'mode' => 'DEEP_LINK',					
+                'paymentMethod' => 'CREDIT_CARD',		
+                'showPaymentProfiles' => 'false',	
+                'callbackUrl' => 'https://test-merchant.ma/PayzonePaywall/callback.php',
+                'successUrl' => "https://test-merchant.maPayzonePaywall/success.html",
+                'failureUrl' => "https://test-merchant.ma/PayzonePaywall/failure.html",
+                'cancelUrl' => "https://test-merchant.ma",
+              );
+
+              $json_payload = json_encode($data_payement);
+              $signature    = hash('sha256', $paywallSecretKey . $json_payload);
+        } elseif ($request['payment_method'] == 'binga') {
+            $gateway_url = "https://api.binga.ma/bingaApi/order/prePay.action";
+            // $gateway_url = "https://preprod.binga.ma/bingaApi/order/prePay.action";
+            // $StoreId = '400973';
+            $StoreId = '401040';
+            $status = 'PRE-PAY';
+            // $SLKSecretkey = '1wedyprod675kuw3e31ke9ds19quatkt';
+            $SLKSecretkey = '3af432d8cd05f693c88d7e54cf43d800';
+            $dataMD5 = $status . $total . $StoreId . $cartId . $assurance['email'] . $SLKSecretkey;
+            $checksum = MD5($dataMD5);
+            $store_id = $StoreId;
+            $nextdays = time() + (7 * 24 * 60 * 60);
+
+            $data_payement = array(
+                'externalId' => $cartId,
+                'expirationDate' => gmdate('Y-m-d\TH:i:s\G\M\T', $nextdays),
+                'amount' => $total,
+                'buyerFirstName' => $assurance['prenom'],
+                'buyerLastName' => $assurance['nom'],
+                'buyerEmail' => $assurance['email'],
+                'buyerAddress' => $assurance['addresse'],
+                'buyerPhone' => $assurance['tel'],
+                'storeId' => $store_id,
+                'apiVersion' => '1.1',
+                'successUrl' => route('confirme', base64_encode($assurance['email'])),
+                'failureUrl' => route('formulaire'),
+                'bookUrl' => route('reservation'),
+                'payUrl' => route('pay'),
+                'orderCheckSum' => $checksum,
+            );
+            // dump($data_payement);exit();
         }
+
+        $datas = [
+            'page' => 'checkout',
+            'data_payement' => $data_payement,
+            'gateway_url' => $gateway_url,
+            'store_id' => $store_id,
+            'cartId' => $cartId,
+            'checksum' => $checksum,
+            'total' => $total,
+            'data' => $request,
+        ];
+
+        // dump($data_payement);exit();
+
+        return view('checkout', $datas);
     }
 
     public function send_mail(Request $request, $type, $id)

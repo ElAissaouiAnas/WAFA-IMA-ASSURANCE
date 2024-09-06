@@ -12,8 +12,8 @@
                         Telecommerce.<br> Veuillez renseigner vos cordonnées bancaires
                         pour finaliser votre achat.
                     </p>
-                    <form name="paymentForm" action="<?php echo $gateway_url?>" method="post">
-                    <?php
+                    <form name="paymentForm" action="<?php echo $paywallUrl?>" method="post">
+                        <?php
             
                         $postParams = array();
                         foreach ($data_payement as $key => $value){
@@ -40,17 +40,19 @@
                         $calculatedHashValue = hash('sha512', $hashval);  
                         $hash = base64_encode (pack('H*',$calculatedHashValue));
                         
-                        echo "<input type=\"hidden\" name=\"HASH\" value=\"" .$hash."\" />";			
-                    
-                    ?>
+                        echo "
+                        <input type=\"hidden\" name=\"payload\" value=\"<?php echo $json_payload; ?>\" />
+                        <input type=\"hidden\" name=\"signature\" value=\"<?php echo $signature; ?>\" />";
+
+                        ?>
                     </form>
                     <?php }elseif($data['payment_method'] == 'binga'){ ?>
                     <p>
                         Nous vous transferons vers la page de paiement sécurisé Binga.<br>
                         Veuillez renseigner vos cordonnées pour finaliser votre achat.
                     </p>
-                     <form name="paymentForm" action="<?php echo $gateway_url?>" method="post">
-                     <?php
+                    <form name="paymentForm" action="<?php echo $gateway_url?>" method="post">
+                        <?php
                         foreach ($data_payement as $key => $value){
                             echo "<input type=\"hidden\" name=\"" .$key ."\" value=\"" .trim($value)."\" />";
                         }
@@ -67,5 +69,7 @@
 </section>
 @endsection
 @section('javascripts')
-<script>document.forms.paymentForm.submit();</script>
+<script>
+document.forms.paymentForm.submit();
+</script>
 @endsection
