@@ -36,7 +36,7 @@
     <div class="container" style="margin-top:20px">
         <h1 class="text-center">Résumé de votre demande d'assurance voyage</h1>
         <div class="col-lg-12 col-md-12">
-            <form data-toggle="validator" role="form" method="post" action="{{ route('checkout') }}">
+            <form data-toggle="validator" name="payment" role="form" method="post" action="">
                 {{ csrf_field() }}
                 <div class="box-light">
                     <div class="row">
@@ -288,7 +288,7 @@
                                         </div>
                                         <div class="col-md-12 form-group">
                                             <label class="radio no-padding-right size-12">
-                                                <input type="radio" value="mtc" name="payment_method" required />
+                                                <input type="radio" value="payzone" name="payment_method" required />
                                                 <i></i>
                                                 <div style="margin-bottom: 10px;">
                                                     Carte bancaire
@@ -348,4 +348,18 @@
 @endsection
 @section('javascripts')
 <script type="text/javascript" src="{{ asset('assets/js/validator.min.js')}}"></script>
+
+
+<script>
+$(document).ready(function(){
+    $("input[name='payment_method']").on("change",function(){
+        if($(this).val()=="binga"){
+            $("form[name='payment']").attr("action","{{route('checkout')}}");
+        }else if($(this).val()=="payzone"){
+            $("form[name='payment']").attr("action","{{asset('/')}}"+$(this).val()+"/checkout");
+        }
+    });
+}); 
+</script>
+
 @endsection

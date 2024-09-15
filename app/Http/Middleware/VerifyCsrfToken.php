@@ -24,5 +24,6 @@ class VerifyCsrfToken extends Middleware
         // 'reservation',
         // 'pay',
         // 'confirmepayement',
+        'payzone/callback',
     ];
 }

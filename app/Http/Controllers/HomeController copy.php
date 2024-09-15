@@ -15,8 +15,6 @@ use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use PayXpert\Connect2Pay\Connect2PayClient;
 
-use Session;
-
 class HomeController extends Controller
 {
     /**
@@ -174,27 +172,25 @@ class HomeController extends Controller
      * name('paiment)
      */
     public function paiement(Request $request)
-    {     
-    
-        $request['type'] = 'site';
+    {       
+        /* $request['type'] = 'site';
         $data_tosave = $request->all();
         $data_tosave['type'] = 'site';
-        $util = new Util();
+        $util = new Util(); */
 
-        $captcha = $util->rpHash($data_tosave['defaultReal']);
+        /* $captcha = $util->rpHash($data_tosave['defaultReal']);
         if ($captcha != $data_tosave['defaultRealHash']) {
             // echo "captcha";die();
             return Redirect::back();
-        }
-        //==================================
-        // for devloper
-        /* $request_test = [
-            "_token" => "qN9cVXcdx3RiJ5IZ65oQTPlq8OwyNq44g4W5Me3U", "company" => "WAFA IMA ASSISTANCE", "type" => "site", "duree" => "6 mois", "date_effet" => "12/02/2024", "prenom" => "Sunt ut asperiores c", "nom" => "Sunt ut asperiores c", "cin" => "Lorem recusandae Es", "email" => "19mansour94@gmail.com", "confirmationEmail" => "19mansour94@gmail.com", "tel" => "0603048331", "lieunaissance" => "Aliquid amet enim u", "datenaissance" => "04/12/1994", "vehicule" => "Non", "conjoints" => "0", "enfants" => "0", "addresse" => "Perferendis et enim", "defaultRealHash" => "-810982583", "defaultReal" => "HIJDFV", "ville" => "Aliquid amet enim u", "pays" => "Maroc",
+        } */
+        $request_test = [
+            "_token" => "qN9cVXcdx3RiJ5IZ65oQTPlq8OwyNq44g4W5Me3U", "company" => "WAFA IMA ASSISTANCE", "type" => "site", "duree" => "6 mois", "date_effet" => "12/02/2024", "prenom" => "Sunt ut asperiores c", "nom" => "Sunt ut asperiores c", "cin" => "Lorem recusandae Es", "email" => "lyka@mailinator.com", "confirmationEmail" => "lyka@mailinator.com", "tel" => "0603048331", "lieunaissance" => "Aliquid amet enim u", "datenaissance" => "04/12/1994", "vehicule" => "Non", "conjoints" => "0", "enfants" => "0", "addresse" => "Perferendis et enim", "defaultRealHash" => "-810982583", "defaultReal" => "HIJDFV", "ville" => "Aliquid amet enim u", "pays" => "Maroc",
             "prenom_c1" => null, "nom_c1" => null, "datenaissance_c1" => null, "prenom_c2" => null, "nom_c2" => null, "datenaissance_c2" => null, "prenom_c3" => null, "nom_c3" => null, "datenaissance_c3" => null, "prenom_c4" => null, "nom_c4" => null, "datenaissance_c4" => null, "prenom_e1" => null, "nom_e1" => null, "datenaissance_e1" => null, "prenom_e2" => null, "nom_e2" => null, "datenaissance_e2" => null, "prenom_e3" => null, "nom_e3" => null, "datenaissance_e3" => null, "prenom_e4" => null, "nom_e4" => null, "datenaissance_e4" => null, "prenom_e5" => null, "nom_e5" => null, "datenaissance_e5" => null, "prenom_e6" => null, "nom_e6" => null, "datenaissance_e6" => null, "annee_vehicule" => null, "marque_vehicule" => null, "modele_vehicule" => null, "num_vehicule" => null, "radio-condition-2" => "2", "radio-condition-3" => "3", "radio-condition-4" => "4", "contrat_id" => "83", "prime_ttc" => "700"
         ];
         $request_test["type"] = "site";
         $data_tosave = $request_test;
-        $data_tosave['type']='site'; */
+        $data_tosave['type']='site';
+
         //===================================
 
         if (!isset($data_tosave['contrat_id']) || empty($data_tosave['contrat_id'])) {
@@ -218,6 +214,7 @@ class HomeController extends Controller
 
 
         $last_assurance = Assurance::create($data_tosave);
+
         $datas = [
             'page' => 'paiement',
             'data' => $last_assurance,
@@ -423,16 +420,21 @@ class HomeController extends Controller
         return Redirect::back();
     }
     /**
-     * GET /confirme/{key}
-     * POST /confirme/{key}
+     * GET /confirm/{key}
+     * POST /confirm/{key}
      * name('confirme')
-     * Display insurances list
      */
-    public function confirm(Request $request, $key)
+    public function confirme(Request $request, $key)
     {
+
         $amount = isset($_POST["amount"]) ? $_POST["amount"] : '';
+      
+
+
         $email = base64_decode($key);
+
         $assurances = Assurance::where('email', $email)->whereIn('status', ['PENDING', 'PAID'])->orderBy('id', 'DESC')->get();
+
         $datas = [
             'page' => 'confirme',
             'assurances' => $assurances,
@@ -441,22 +443,99 @@ class HomeController extends Controller
 
         return view('recap', $datas);
     }
+
     /**
-     * Handle the checkout process.
-     *
-     * @method POST
-     * @route /checkout
-     * @name checkout
-     *
-     * This endpoint processes the checkout request for Binga,
+     * POST /checkout
+     * name('checkout')
      */
     public function checkout(Request $request)
     {
         $cartId =  $request['assurance_id'];
+
         $assurance = Assurance::where('id', $cartId)->first();
         $total = number_format($assurance['montant'], 2, '.', '');
-        
-        if ($request['payment_method'] == 'binga') {
+
+        if ($request['payment_method'] == 'mtc') {
+            
+            //$gateway_url = "https://payment.cmi.co.ma/fim/est3Dgate";
+             $gateway_url = "https://testpayment.cmi.co.ma/fim/est3Dgate";
+            //$storeKey = "MAI+1234+CMI"; //de prod
+            $storeKey = "M0mnoofL2da0J3Z9"; //de test
+            //$orgClientId  = "600000682";//de prod
+            $orgClientId = "600000125"; //de test
+            $orgAmount =  number_format($total, 2, '.', '');
+            $orgOkUrl = route("confirme", base64_encode($assurance['email']));
+            $orgFailUrl = route("formulaire_key", ['error' => 'Malheureusement, votre paiement a été refusé.', 'key' => base64_encode($assurance['id'])]);
+            $shopurl = $orgFailUrl;
+            $orgTransactionType = "PreAuth";
+            $orgRnd =  microtime();
+            $orgCallbackUrl = route("confirmepayement");
+            $orgCurrency = "504";
+            $merchantAccount = 'Wafaimaassistance';
+            $paywallSecretKey = '&ZkKnb-ha3dLQlTZ';
+            $paywallUrl = 'https://payment-sandbox.payzone.ma/pwthree/launch';
+            $notificationKey = 'h9z8OuJm&twBqNiW';
+            
+
+            // $data_payement = array(
+            //     'clientid' => $orgClientId,
+            //     'amount' => $orgAmount,
+            //     'okUrl' => $orgOkUrl,
+            //     'failUrl' => $orgFailUrl,
+            //     'TranType' => $orgTransactionType,
+            //     'callbackUrl' => $orgCallbackUrl,
+            //     'shopurl' => $shopurl,
+            //     'currency' => $orgCurrency,
+            //     'rnd' => $orgRnd,
+            //     'storetype' => '3D_PAY_HOSTING',
+            //     'hashAlgorithm' => 'ver3',
+            //     'lang' => 'fr',
+            //     'refreshtime' => '5',
+            //     'BillToName' => $assurance['prenom'] . ' ' . $assurance['nom'],
+            //     //'BillToCompany' => 'Axa assistance',
+            //     'BillToStreet1' => $assurance['addresse'],
+            //     //'BillToCity' => 'Casablanca',
+            //     //'BillToStateProv' => 'Casablanca',
+            //     //'BillToPostalCode' => '20230',
+            //     'BillToCountry' => '504',
+            //     'email' => $assurance['email'],
+            //     'tel' => $assurance['tel'],
+            //     'encoding' => 'UTF-8',
+            //     'oid' => $cartId
+            // );
+            $data_payement = array(
+                // Authentication parameters
+                'merchantAccount'      => $merchantAccount,
+                'timestamp'       => time(),
+                'skin'        => 'vps-1-vue',
+            
+                // Customer parameters
+                'customerId'      =>  time(), //must be unique for each custumer
+                'customerCountry' => 'MA',	
+                'customerLocale' => 'en_US',		        
+            
+                // Charge parameters
+                'chargeId'        => time(),					// Optional, unless required by the merchant account
+                'orderId'         => time(),
+                'price'           => $orgAmount,
+                'currency'        => 'MAD',
+                'description'     => 'A Big Hat',
+                'displayCurrency' => 'EUR',
+                'displayPrice'    => '10',
+            
+                // Deep linking
+                'mode' => 'DEEP_LINK',					
+                'paymentMethod' => 'CREDIT_CARD',		
+                'showPaymentProfiles' => 'false',	
+                'callbackUrl' => 'https://test-merchant.ma/PayzonePaywall/callback.php',
+                'successUrl' => "https://test-merchant.maPayzonePaywall/success.html",
+                'failureUrl' => "https://test-merchant.ma/PayzonePaywall/failure.html",
+                'cancelUrl' => "https://test-merchant.ma",
+              );
+
+              $json_payload = json_encode($data_payement);
+              $signature    = hash('sha256', $paywallSecretKey . $json_payload);
+        } elseif ($request['payment_method'] == 'binga') {
             $gateway_url = "https://api.binga.ma/bingaApi/order/prePay.action";
             // $gateway_url = "https://preprod.binga.ma/bingaApi/order/prePay.action";
             // $StoreId = '400973';
@@ -469,7 +548,7 @@ class HomeController extends Controller
             $store_id = $StoreId;
             $nextdays = time() + (7 * 24 * 60 * 60);
 
-            $data_payment = array(
+            $data_payement = array(
                 'externalId' => $cartId,
                 'expirationDate' => gmdate('Y-m-d\TH:i:s\G\M\T', $nextdays),
                 'amount' => $total,
@@ -487,19 +566,22 @@ class HomeController extends Controller
                 'orderCheckSum' => $checksum,
             );
             // dump($data_payement);exit();
-            $data = [
-                'page' => 'checkout',
-                'payment_method'=> $request['payment_method'],
-                'data_payment' => $data_payment,
-                'gateway_url' => $gateway_url,
-                'store_id' => $store_id,
-                'cartId' => $cartId,
-                'checksum' => $checksum,
-                'total' => $total,
-                'data' => $request,
-            ];
-            return view("checkout", $data);
         }
+
+        $datas = [
+            'page' => 'checkout',
+            'data_payement' => $data_payement,
+            'gateway_url' => $gateway_url,
+            'store_id' => $store_id,
+            'cartId' => $cartId,
+            'checksum' => $checksum,
+            'total' => $total,
+            'data' => $request,
+        ];
+
+        // dump($data_payement);exit();
+
+        return view('checkout', $datas);
     }
     /**
      * POST /send_mail/{type}/{id}
@@ -563,6 +645,7 @@ class HomeController extends Controller
         Assurance::where('id', $externalId)->update(['cmi_payload' => $jsonData]); //store CMI callback data for each transaction
 
         //calculate the hash locally and compare it with callback hash
+
         natcasesort($postParams);
         $hach = "";
         $hashval = "";
@@ -696,6 +779,8 @@ class HomeController extends Controller
      */
     public function pay(Request $request)
     {
+
+
         $email = $_POST["buyerEmail"];
 
         $externalId = $_POST["externalId"];

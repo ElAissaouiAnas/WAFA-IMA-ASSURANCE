@@ -26,3 +26,7 @@
 /files/assurances/*
 
 node_modules
+/public
+.env
+.env copy
+.env
