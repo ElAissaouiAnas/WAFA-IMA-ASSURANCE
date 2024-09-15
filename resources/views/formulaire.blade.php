@@ -41,6 +41,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading panel-heading-transparent">
                                     <h2 class="panel-title my-green">Contrat</h2>
+
                                 </div>
                                 <div class="panel-body">
                                     <div class="row">
@@ -55,20 +56,20 @@
                                             <label>Type de contrat<sup style="color:red">*</sup>:</label>
                                             <select class="form-control" id="type" name="type" required>
                                                 <option></option>
-                                                <option value="W@fa Monde" <?php echo isset($contrat['type'])
-                                                    && trim($contrat['type'])=='W@fa Monde' ? 'selected' : ''
+                                                <option value="Wafa Monde" <?php echo isset($contrat['type'])
+                                                    && trim($contrat['type'])=='Wafa Monde' ? 'selected' : ''
                                                     ?>>
-                                                    W@fa Monde</option>
-                                                <option value="W@fa Schengen" <?php
+                                                    Wafa Monde</option>
+                                                <option value="Wafa Schengen" <?php
                                                     echo isset($contrat['type']) &&
-                                                    trim($contrat['type'])=='W@fa Schengen'
+                                                    trim($contrat['type'])=='Wafa Schengen'
                                                     ? 'selected' : '' ?>>
-                                                    W@fa Schengen</option>
-                                                <option value="W@fa Etudiant Expatrié" <?php
+                                                    Wafa Schengen</option>
+                                                <option value="Wafa Schengen" <?php
                                                     echo isset($contrat['type']) &&
-                                                    trim($contrat['type'])=='W@fa Etudiant Expatrié'
+                                                    trim($contrat['type'])=='Wafa Etudiant Expatrié'
                                                     ? 'selected' : '' ?>>
-                                                    W@fa Etudiant Expatrié</option>
+                                                    Wafa Etudiant Expatrié</option>
                                             </select>
                                             <small>Choix disponibles : Schengen ou Monde</small>
                                         </div>

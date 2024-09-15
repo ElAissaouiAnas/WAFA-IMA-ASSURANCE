@@ -13,7 +13,6 @@ use Redirect;
 use Log;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use PayXpert\Connect2Pay\Connect2PayClient;
 
 class HomeController extends Controller
 {
@@ -107,7 +106,7 @@ class HomeController extends Controller
         if ($interval->y >= 70 || $interval_c1->y >= 70 || $interval_c2->y >= 70 || $interval_c3->y >= 70 || $interval_c4->y >= 70) {
             $age_array[] = 'Plus de 70 ans';
         } elseif ($interval->y >= 21 && $interval->y < 70) {
-            $age_array[] = 'Plus de 21 an et moins de 70 ans';
+            $age_array[] = 'Entre 21 et 70 ans';
             $age_array[] = 'Moins de 70 ans';
         } elseif ($interval->y < 21) {
             $age_array[] = 'Moins de 21 ans';
@@ -435,70 +434,37 @@ class HomeController extends Controller
             $orgRnd =  microtime();
             $orgCallbackUrl = route("confirmepayement");
             $orgCurrency = "504";
-            $merchantAccount = 'Wafaimaassistance';
-            $paywallSecretKey = '&ZkKnb-ha3dLQlTZ';
-            $paywallUrl = 'https://payment-sandbox.payzone.ma/pwthree/launch';
-            $notificationKey = 'h9z8OuJm&twBqNiW';
             
 
-            // $data_payement = array(
-            //     'clientid' => $orgClientId,
-            //     'amount' => $orgAmount,
-            //     'okUrl' => $orgOkUrl,
-            //     'failUrl' => $orgFailUrl,
-            //     'TranType' => $orgTransactionType,
-            //     'callbackUrl' => $orgCallbackUrl,
-            //     'shopurl' => $shopurl,
-            //     'currency' => $orgCurrency,
-            //     'rnd' => $orgRnd,
-            //     'storetype' => '3D_PAY_HOSTING',
-            //     'hashAlgorithm' => 'ver3',
-            //     'lang' => 'fr',
-            //     'refreshtime' => '5',
-            //     'BillToName' => $assurance['prenom'] . ' ' . $assurance['nom'],
-            //     //'BillToCompany' => 'Axa assistance',
-            //     'BillToStreet1' => $assurance['addresse'],
-            //     //'BillToCity' => 'Casablanca',
-            //     //'BillToStateProv' => 'Casablanca',
-            //     //'BillToPostalCode' => '20230',
-            //     'BillToCountry' => '504',
-            //     'email' => $assurance['email'],
-            //     'tel' => $assurance['tel'],
-            //     'encoding' => 'UTF-8',
-            //     'oid' => $cartId
-            // );
             $data_payement = array(
-                // Authentication parameters
-                'merchantAccount'      => $merchantAccount,
-                'timestamp'       => time(),
-                'skin'        => 'vps-1-vue',
-            
-                // Customer parameters
-                'customerId'      =>  time(), //must be unique for each custumer
-                'customerCountry' => 'MA',	
-                'customerLocale' => 'en_US',		        
-            
-                // Charge parameters
-                'chargeId'        => time(),					// Optional, unless required by the merchant account
-                'orderId'         => time(),
-                'price'           => $orgAmount,
-                'currency'        => 'MAD',
-                'description'     => 'A Big Hat',
-                'displayCurrency' => 'EUR',
-                'displayPrice'    => '10',
-            
-                // Deep linking
-                'mode' => 'DEEP_LINK',					
-                'paymentMethod' => 'CREDIT_CARD',		
-                'showPaymentProfiles' => 'false',	
-                'callbackUrl' => 'https://test-merchant.ma/PayzonePaywall/callback.php',
-                'successUrl' => "https://test-merchant.maPayzonePaywall/success.html",
-                'failureUrl' => "https://test-merchant.ma/PayzonePaywall/failure.html",
-                'cancelUrl' => "https://test-merchant.ma",
-              );
+                'clientid' => $orgClientId,
+                'amount' => $orgAmount,
+                'okUrl' => $orgOkUrl,
+                'failUrl' => $orgFailUrl,
+                'TranType' => $orgTransactionType,
+                'callbackUrl' => $orgCallbackUrl,
+                'shopurl' => $shopurl,
+                'currency' => $orgCurrency,
+                'rnd' => $orgRnd,
+                'storetype' => '3D_PAY_HOSTING',
+                'hashAlgorithm' => 'ver3',
+                'lang' => 'fr',
+                'refreshtime' => '5',
+                'BillToName' => $assurance['prenom'] . ' ' . $assurance['nom'],
+                //'BillToCompany' => 'Axa assistance',
+                'BillToStreet1' => $assurance['addresse'],
+                //'BillToCity' => 'Casablanca',
+                //'BillToStateProv' => 'Casablanca',
+                //'BillToPostalCode' => '20230',
+                'BillToCountry' => '504',
+                'email' => $assurance['email'],
+                'tel' => $assurance['tel'],
+                'encoding' => 'UTF-8',
+                'oid' => $cartId
+            );
 
-              $json_payload = json_encode($data_payement);
-              $signature    = hash('sha256', $paywallSecretKey . $json_payload);
+            $checksum = '';
+            $store_id = $storeKey;
         } elseif ($request['payment_method'] == 'binga') {
             $gateway_url = "https://api.binga.ma/bingaApi/order/prePay.action";
             // $gateway_url = "https://preprod.binga.ma/bingaApi/order/prePay.action";
