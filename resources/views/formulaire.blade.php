@@ -664,9 +664,9 @@
                                                 <input type="hidden" id="prime_ttc_v" name="prime_ttc"
                                                     value="<?php echo isset($assurance['montant']) ? $assurance['montant'] : '' ?>"
                                                     required />
-                                                <button id="btn_submit" type="submit"
-                                                    class="btn btn-block btn-pay pull-right">VALIDER <i
-                                                        class="fa fa-arrow-right"></i></button>
+                                                <button id="btn_submit" type="submit" class="btn btn-block btn-pay pull-right">
+                                                    VALIDER <i class="fa fa-arrow-right"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

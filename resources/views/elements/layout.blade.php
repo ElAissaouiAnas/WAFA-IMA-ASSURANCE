@@ -76,9 +76,8 @@
 
     gtag('config', 'G-H7MK6MVBK8');
     </script>
-
-
-</head>
+ <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>  
+    
 
 <body class="smoothscroll enable-animation">
     <!-- Google Tag Manager (noscript) -->
@@ -95,6 +94,7 @@
             <span class="loader"></span>
         </div>
     </div>
+
     <!-- JAVASCRIPT FILES -->
     <script type="text/javascript">
     var plugin_path = "{{ asset('assets/plugins/')}}";
@@ -109,6 +109,7 @@
     <!-- SCRIPTS -->
     <script type="text/javascript" src="{{ asset('assets/js/scripts.js')}}"></script>
     @yield('javascripts')
+   
 </body>
 
 </html>

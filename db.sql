@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `assurances` (
   `type` varchar(50) DEFAULT 'callcenter',
   PRIMARY KEY (`id`),
   KEY `status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- Data exporting was unselected.
 
