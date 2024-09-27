@@ -433,6 +433,7 @@ class HomeController extends Controller
         $amount = isset($_POST["amount"]) ? $_POST["amount"] : '';
         $email = base64_decode($key);
         $assurances = Assurance::where('email', $email)->whereIn('status', ['PENDING', 'PAID'])->orderBy('id', 'DESC')->get();
+        //we have to join assurance table with payzone_transactions tabel in order to get transaction details
         $datas = [
             'page' => 'confirme',
             'assurances' => $assurances,

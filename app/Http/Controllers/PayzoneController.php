@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-use Session;
-
-use App\Classes\Payzone;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Mail\Email;
 use Illuminate\Support\Facades\Mail;
+use Session;
+
+//my classes
+use App\Classes\Payzone;
+
 //models
 use App\Assurance;
 
@@ -35,8 +38,23 @@ class PayzoneController extends Controller
     * @return A view that displays the Payzone payment form.
     */
     public function checkout(Request $rq){
-        $payload =  Payzone::payload($rq->assurance_id);
-        $payload["payment_method"] = $rq->payment_method; // equal 'payzone'
+        $assurance = Assurance::find($rq->assurance_id);
+        if($assurance==null) abort(404);
+
+        $payzone = new Payzone($assurance->montant);
+        $payload= $payzone->payload();
+
+        $payload["payment_method"] = $rq->payment_method;//This variable is sourced from a form in the `paiement.blade.php` file, and it currently holds the value 'payzone'.
+        
+        //create transaction record
+        DB::table("payzone_transactions")->insert([
+            "transaction_id" => $payzone->order_id(),
+            "product_id" => $assurance->id,
+            "address_ip" => $rq->ip(),
+            "created_at" => Carbon::now()
+        ]);
+
+        Session::put("product_id",$assurance->id);
         return view("checkout", $payload);
     }
     /**
@@ -46,35 +64,18 @@ class PayzoneController extends Controller
     * Handles the GET request for the Payzone success callback.
     * This endpoint processes the successful payment status and updates the insurance status information.
     *
-    * @return A redirect response to the appropriate page after processing the success information.
+    * @return A view that displays the message of payment successful
+    * @return redirection in this case
     */
-    public function success(Request $rq,$key){
-        //check session is not empty
-        if(!Session::has("chargeId"))
+    public function success(Request $rq){
+        if(!Session::has("product_id"))
             abort(404);
-        // update insurance informations
-        $assurance_id = base64_decode($key);
-        $assurance = Assurance::find($assurance_id);
-        $assurance->id_transaction= Session::get("chargeId");
-        $assurance->status="PAID";
-        $assurance->montant_visa= Session::get("price"); 
-        $assurance->montant_service = Session::get("price");
-        $assurance->paidDate = Carbon::now();
-        $assurance->valid=1;
-        $assurance->save();
-
+        // find Assurance
+        $assurance = Assurance::find(Session::get("product_id"));
         //forget Session
-        Session::forget("chargeId");
-        Session::forget("price");
-        try {
-            if ($assurance->email) {
-                $assurance->type = 1;
-                Mail::to($assurance->email)->send(new Email($assurance));
-            }
-        } catch (\Throwable $th) {
-        }
+        Session::forget("product_id");
+        
         return redirect()->route('confirme',base64_encode($assurance->email));
-    
     }
     /**
      * Handle payment status changes.
@@ -89,7 +90,7 @@ class PayzoneController extends Controller
      *
      * Note: This endpoint is currently not working when tested on localhost.
      */
-    public function callback(Request $request,$key){
+    public function callback(Request $request){
         // Get the raw input data
         $input = $request->getContent();
         // Define the notification key (you should probably retrieve this from your configuration or environment)
@@ -110,18 +111,27 @@ class PayzoneController extends Controller
                         $transactionData = $transaction;
                     }
                 }
-                if ($transactionData && $transactionData['resultCode'] === 0) {
-                    // find insurance
-                    $assurance_id = base64_decode($key);
-                    $assurance = Assurance::find($assurance_id);
-                    //update informations
-                    $assurance->id_transaction= $inputArray["id"];
-                    $assurance->status="PAID";
-                    $assurance->montant_visa= $transaction["amount"]; 
-                    $assurance->montant_service = $transaction["amount"];
-                    $assurance->paidDate = $transaction["timestamp"];
-                    $assurance->valid=1;
-                    $assurance->save();
+                if ($transactionData && $transactionData['resultCode'] === 0) {                    
+                    // Successful payment
+                    //update table payzone_transactions
+                    $transaction = DB::table("payzone_transactions")->where("transaction_id",$inputArray["id"]);
+                    $transaction->update([
+                                "internal_id" => $inputArray["internalId"],
+                                "state" => "PAID",
+                                "amount" => $transactionData["amount"],
+                                "currency" => $transactionData["currency"],
+                                "timestamp" => date('Y-m-d H:i:s', strtotime($transactionData["timestamp"])),
+                                "details" => $input
+                            ]);
+                    //update table assurances
+                    //this function is temporary untile we change the structur of database
+                    DB::table("assurances")->where("id",$transaction->first()->product_id)
+                                           ->update([
+                                            "id_transaction"=>$inputArray["id"],
+                                            "status"=>"PAID",
+                                            "confirmed"=>"O",
+                                            "confirmedDate"=>date('Y-m-d H:i:s', strtotime($transactionData["timestamp"])),
+                                           ]);
                     // send Email
                     try {
                         if ($assurance->email) {
@@ -130,13 +140,16 @@ class PayzoneController extends Controller
                         }
                     } catch (\Throwable $th) {
                     }
-                    // Successful payment
                     return response()->json([
                         'status' => 'OK',
                         'message' => 'Status recorded successfully'
                     ], 200);
                 } else {
                     // Payment not successful
+                    DB::table("payzone_transactions")->where("transaction_id",$inputArray["id"])
+                                                    ->update([
+                                                        "state" => "FAILED",
+                                                    ]);
                     return response()->json([
                         'status' => 'KO',
                         'message' => 'Status not recorded successfully'
@@ -149,6 +162,11 @@ class PayzoneController extends Controller
                         $transactionData = $transaction;
                     }
                 }
+                DB::table("payzone_transactions")->where("transaction_id",$inputArray["id"])
+                                                ->update([
+                                                    "state" => "DECLINED",
+                                                ]);
+                
 
                 return response()->json([
                     'status' => 'KO',
@@ -156,6 +174,10 @@ class PayzoneController extends Controller
                 ], 400);
             }
         } else {
+            DB::table("payzone_transactions")->where("transaction_id",$inputArray["id"])
+                                            ->update([
+                                                "state" => "DECLINED",
+                                            ]);
             // Signature mismatch
             return response()->json([
                 'status' => 'KO',

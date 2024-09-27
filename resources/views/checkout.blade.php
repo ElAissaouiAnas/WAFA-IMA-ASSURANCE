@@ -23,11 +23,11 @@
                             @endforeach
                         </form>
                     @endif
-                    {{-- 
+                
                     <div style="text-align: center; margin-top: 20px;">
                         <img src="{{ asset('/images/ajax-loader.gif')}}">
                     </div>
-                        --}}
+                    
                     
                 </div>
             </div>

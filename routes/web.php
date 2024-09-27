@@ -51,10 +51,10 @@ Route::name('confirme')->post('/confirme/{key}', 'HomeController@confirm');
 //Created By Salah-Eddine
 //Email:  19mansour94@gmail.com
 Route::name("payzone.checkout")->post("/payzone/checkout","PayzoneController@checkout");
-Route::name("payzone.success")->get("/payzone/success/{key}","PayzoneController@success");
+Route::name("payzone.success")->get("/payzone/success","PayzoneController@success");
 //callback function is not working
-Route::name("payzone.callback")->get("/payzone/callback/{key}","PayzoneController@callback");
-Route::name("payzone.callback")->post("/payzone/callback/{key}","PayzoneController@callback");
+//Route::name("payzone.callback")->get("/payzone/callback","PayzoneController@callback");
+Route::name("payzone.callback")->post("/payzone/callback","PayzoneController@callback");
 //======================================================
 //======================================================
 
