@@ -1,0 +1,48 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+
+matrix:
+  allow_failures:
+    - php: 5.5
+
+
+env:
+  - CAKE_VERSION=2.2.8 DB=mysql
+  - CAKE_VERSION=master DB=mysql
+  - CAKE_VERSION=2.4 DB=mysql
+
+before_script:
+  - wget https://github.com/nicolasff/phpredis/archive/2.2.3.zip -O php-redis.zip
+  - unzip php-redis.zip
+  - cd phpredis-2.2.3/
+  - phpize
+  - ./configure
+  - make && make install
+  - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - cd ../
+  - rm -R phpredis-2.2.3/
+  - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
+  - cp -R ../Cake-Resque app/Plugin/CakeResque
+  - chmod -R 777 ../cakephp/app/tmp
+  - set +H
+  - echo "
+
+    CakePlugin::loadAll(array('CakeResque' => array('bootstrap' => true)));" >> ../cakephp/app/Config/bootstrap.php
+  - cd app/Plugin/CakeResque
+  - composer self-update
+  - composer install --prefer-source --dev
+  - pear channel-discover pear.bovigo.org
+  - pear install bovigo/vfsStream-beta
+  - phpenv rehash
+  - cd ../../Console
+
+script:
+  - mkdir -p build/logs
+  - ./cake test CakeResque AllCakeResque --stderr --configuration ../Plugin/CakeResque/Test/phpunit.xml
+
+after_script:
+  - php ../Plugin/CakeResque/vendor/bin/coveralls -v
