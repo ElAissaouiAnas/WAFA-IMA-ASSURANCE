@@ -100,7 +100,7 @@
                                 </div>
                                 <div class="panel-body">
                                     <div class="row">
-                                        <div class="col-md-4 form-group">
+                                        <div class="col-md-3 form-group">
                                             <label>Date d'effet<sup style="color:red">*</sup>:</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control date_min datepicker_"
@@ -112,43 +112,19 @@
                                                         class="glyphicon glyphicon-calendar"></i></span>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4 form-group">
-                                            <label>Prénom<sup style="color:red">*</sup>:</label>
-                                            <input type="text" pattern="[A-Za-z ]{3,100}" class="form-control"
-                                                id="prenom" name="prenom"
-                                                value="<?php echo isset($assurance['prenom']) ? $assurance['prenom'] : '' ?>"
-                                                required />
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label>Nom<sup style="color:red">*</sup>:</label>
-                                            <input type="text" pattern="[A-Za-z ]{3,100}" class="form-control" id="nom"
-                                                name="nom"
-                                                value="<?php echo isset($assurance['nom']) ? $assurance['nom'] : '' ?>"
-                                                required />
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label>CIN / N° passeport<sup style="color:red">*</sup>:</label>
-                                            <input type="text" class="form-control" id="cin" name="cin"
-                                                value="<?php echo isset($assurance['cin']) ? $assurance['cin'] : '' ?>"
-                                                required />
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4 form-group">
+                                        <div class="col-md-3 form-group">
                                             <label>Email<sup style="color:red">*</sup>:</label>
                                             <input type="email" class="form-control" id="email" name="email"
                                                 value="<?php echo isset($assurance['email']) ? $assurance['email'] : '' ?>"
                                                 required />
                                         </div>
-                                        <div class="col-md-4 form-group">
+                                        <div class="col-md-3 form-group">
                                             <label>Confirmez votre email<sup style="color:red">*</sup>:</label>
                                             <input type="email" name="confirmationEmail" class="form-control"
                                                 value="<?php echo isset($assurance['email']) ? $assurance['email'] : '' ?>"
                                                 required>
                                         </div>
-                                        <div class="col-md-4 form-group">
+                                        <div class="col-md-3 form-group">
                                             <label>Numéro de Téléphone<sup style="color:red">*</sup>:</label>
                                             <input type="tel" pattern="[0-9]{10,16}" class="form-control" id="tel"
                                                 name="tel"
@@ -157,14 +133,50 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4 form-group">
+                                        <div class="col-md-3 form-group">
+                                            <label>Prénom<sup style="color:red">*</sup>:</label>
+                                            <input type="text" pattern="[A-Za-z ]{3,100}" class="form-control"
+                                                id="prenom" name="prenom"
+                                                value="<?php echo isset($assurance['prenom']) ? $assurance['prenom'] : '' ?>"
+                                                required />
+                                        </div>
+                                        <div class="col-md-3 form-group">
+                                            <label>Nom<sup style="color:red">*</sup>:</label>
+                                            <input type="text" pattern="[A-Za-z ]{3,100}" class="form-control" id="nom"
+                                                name="nom"
+                                                value="<?php echo isset($assurance['nom']) ? $assurance['nom'] : '' ?>"
+                                                required />
+                                        </div>
+                                        <div class="col-md-3 form-group">
+                                            <label>Type Identifiant<sup style="color:red">*</sup>:</label>
+                                            <select name="type_identifiant" class="form-control" id="type_identifiant">
+                                                <option value="cin">Carte d'identité nationale</option>
+                                                <option value="passeport">Passeport</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 form-group">
+                                            <label>CIN / N° passeport<sup style="color:red">*</sup>:</label>
+                                            <input type="text" class="form-control" id="identifiant" name="identifiant"
+                                                value="<?php echo isset($assurance['identifiant']) ? $assurance['identifiant'] : '' ?>"
+                                                required />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 form-group">
+                                            <label>Sexe<sup style="color:red">*</sup>:</label>
+                                            <select name="sexe" id="sexe" class="form-control">
+                                                <option value="homme">Homme</option>
+                                                <option value="femme">Femme</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 form-group">
                                             <label>Lieu de naissance<sup style="color:red">*</sup>:</label>
                                             <input type="text" class="form-control" id="lieunaissance"
                                                 name="lieunaissance"
                                                 value="<?php echo isset($assurance['datenaissance']) ? $assurance['datenaissance'] : '' ?>"
                                                 required />
                                         </div>
-                                        <div class="col-md-4 form-group">
+                                        <div class="col-md-3 form-group">
                                             <label>Date de naissance<sup style="color:red">*</sup>:</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control datepicker_" autocomplete="off"
@@ -176,7 +188,7 @@
                                                         class="glyphicon glyphicon-calendar"></i></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 form-group">
+                                        <div class="col-md-3 form-group">
                                             <label>Véhicule:</label>
                                             <select class="form-control" id="vehicule" name="vehicule">
                                                 <option value="Non" <?php echo isset($assurance['vehicule']) &&

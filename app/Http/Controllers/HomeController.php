@@ -188,9 +188,9 @@ class HomeController extends Controller
         }
         //==================================
         // for devloper
-        /* $request_test = [
+       /*  $request_test = [
             "_token" => "qN9cVXcdx3RiJ5IZ65oQTPlq8OwyNq44g4W5Me3U", "company" => "WAFA IMA ASSISTANCE", "type" => "site", "duree" => "6 mois", "date_effet" => "12/02/2024", "prenom" => "Sunt ut asperiores c", "nom" => "Sunt ut asperiores c", "cin" => "Lorem recusandae Es", "email" => "19mansour94@gmail.com", "confirmationEmail" => "19mansour94@gmail.com", "tel" => "0603048331", "lieunaissance" => "Aliquid amet enim u", "datenaissance" => "04/12/1994", "vehicule" => "Non", "conjoints" => "0", "enfants" => "0", "addresse" => "Perferendis et enim", "defaultRealHash" => "-810982583", "defaultReal" => "HIJDFV", "ville" => "Aliquid amet enim u", "pays" => "Maroc",
-            "prenom_c1" => null, "nom_c1" => null, "datenaissance_c1" => null, "prenom_c2" => null, "nom_c2" => null, "datenaissance_c2" => null, "prenom_c3" => null, "nom_c3" => null, "datenaissance_c3" => null, "prenom_c4" => null, "nom_c4" => null, "datenaissance_c4" => null, "prenom_e1" => null, "nom_e1" => null, "datenaissance_e1" => null, "prenom_e2" => null, "nom_e2" => null, "datenaissance_e2" => null, "prenom_e3" => null, "nom_e3" => null, "datenaissance_e3" => null, "prenom_e4" => null, "nom_e4" => null, "datenaissance_e4" => null, "prenom_e5" => null, "nom_e5" => null, "datenaissance_e5" => null, "prenom_e6" => null, "nom_e6" => null, "datenaissance_e6" => null, "annee_vehicule" => null, "marque_vehicule" => null, "modele_vehicule" => null, "num_vehicule" => null, "radio-condition-2" => "2", "radio-condition-3" => "3", "radio-condition-4" => "4", "contrat_id" => "83", "prime_ttc" => "700"
+            "identifiant"=> "ib209456","type_identifiant"=>"cin","sexe"=>"homme" ,"tel"=>"0603048331" ,"prenom_c1" => null, "nom_c1" => null, "datenaissance_c1" => null, "prenom_c2" => null, "nom_c2" => null, "datenaissance_c2" => null, "prenom_c3" => null, "nom_c3" => null, "datenaissance_c3" => null, "prenom_c4" => null, "nom_c4" => null, "datenaissance_c4" => null, "prenom_e1" => null, "nom_e1" => null, "datenaissance_e1" => null, "prenom_e2" => null, "nom_e2" => null, "datenaissance_e2" => null, "prenom_e3" => null, "nom_e3" => null, "datenaissance_e3" => null, "prenom_e4" => null, "nom_e4" => null, "datenaissance_e4" => null, "prenom_e5" => null, "nom_e5" => null, "datenaissance_e5" => null, "prenom_e6" => null, "nom_e6" => null, "datenaissance_e6" => null, "annee_vehicule" => null, "marque_vehicule" => null, "modele_vehicule" => null, "num_vehicule" => null, "radio-condition-2" => "2", "radio-condition-3" => "3", "radio-condition-4" => "4", "contrat_id" => "83", "prime_ttc" => "700"
         ];
         $request_test["type"] = "site";
         $data_tosave = $request_test;
@@ -216,7 +216,7 @@ class HomeController extends Controller
 
         $data_tosave['type'] = 'site';
 
-
+        
         $last_assurance = Assurance::create($data_tosave);
         $datas = [
             'page' => 'paiement',
@@ -432,8 +432,10 @@ class HomeController extends Controller
     {
         $amount = isset($_POST["amount"]) ? $_POST["amount"] : '';
         $email = base64_decode($key);
+    
         $assurances = Assurance::where('email', $email)->whereIn('status', ['PENDING', 'PAID'])->orderBy('id', 'DESC')->get();
-        //we have to join assurance table with payzone_transactions tabel in order to get transaction details
+        //return $assurances;
+        //we have to join assurances table with payzone_transactions table in order to get transaction's details
         $datas = [
             'page' => 'confirme',
             'assurances' => $assurances,

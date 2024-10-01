@@ -12,16 +12,9 @@ use Illuminate\Support\Facades\DB;
 |
 */
 /* Route::get("/test",function(){
-    //return Session::get("chargeId");
-    //return Session::get("signature");
-    //return DB::select(DB::raw("SHOW COLUMNS FROM contrats"));
-    //return DB::select("SHOW TABLES");
-    //return DB::table("users")->get();
-    //return DB::table("payments")->get();
     return DB::table("contrats")->get();
-    return DB::table("a_users")->get();
-    return DB::table("assurances")->get();
 }); */
+
 Route::name('home')->get('/', 'HomeController@home');
 Route::name('formulaire')->get('/formulaire', 'HomeController@formulaire');
 Route::name('formulaire_key')->get('/formulaire/{key}', 'HomeController@formulaire');

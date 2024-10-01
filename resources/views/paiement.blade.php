@@ -84,6 +84,15 @@
                                             <label>Date d'effet:</label>
                                             <p class="form-control-static">{{ $data['date_effet']}}</p>
                                         </div>
+                                        <div class="col-md-4 form-group">
+                                            <label>E-mail:</label>
+                                            <p class="form-control-static">{{ $data['email']}}</p>
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <label>Téléphone:</label>
+                                            <p class="form-control-static">{{ $data['tel']}}</p>
+                                        </div>
+
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4 form-group">
@@ -95,20 +104,15 @@
                                             <p class="form-control-static">{{ $data['nom']}}</p>
                                         </div>
                                         <div class="col-md-4 form-group">
-                                            <label>CIN / N° passeport:</label>
-                                            <p class="form-control-static">{{ $data['cin']}}</p>
+                                            @if($data['type_identifiant']=='cin')
+                                                <label>CIN:</label>
+                                            @else
+                                                <label>Passeport:</label>
+                                            @endif
+                                            <p class="form-control-static">{{ $data['identifiant']}}</p>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-4 form-group">
-                                            <label>E-mail:</label>
-                                            <p class="form-control-static">{{ $data['email']}}</p>
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label>Numéro de Téléphone GSM:</label>
-                                            <p class="form-control-static">{{ $data['tel']}}</p>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="row">
                                         <div class="col-md-4 form-group">
                                             <label>Lieu de naissance:</label>
@@ -118,6 +122,26 @@
                                             <label>Date de naissance:</label>
                                             <p class="form-control-static">{{ $data['datenaissance']}}</p>
                                         </div>
+                                        <div class="col-md-4 form-group">
+                                            <label>Sexe:</label>
+                                            <p class="form-control-static text-capitalize">{{ $data['sexe']}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 form-group">
+                                            <label>Addresse de l'assuré:</label>
+                                            <p class="form-control-static">{{ $data['addresse']}}</p>
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <label>Ville:</label>
+                                            <p class="form-control-static">{{ $data['ville']}}</p>
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <label>Pays:</label>
+                                            <p class="form-control-static">{{ $data['pays']}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-md-4 form-group">
                                             <label>Véhicule:</label>
                                             <p class="form-control-static">{{ $data['vehicule']}}</p>
@@ -129,22 +153,6 @@
                                         <div class="col-md-4 form-group" id="d_enfants" style="display: none">
                                             <label>Enfants à charge <small>(25 ans maximum)</small>:</label>
                                             <p class="form-control-static">{{ $data['enfants']}}</p>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8 form-group">
-                                            <label>Addresse de l'assuré:</label>
-                                            <p class="form-control-static">{{ $data['addresse']}}</p>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4 form-group">
-                                            <label>Ville:</label>
-                                            <p class="form-control-static">{{ $data['ville']}}</p>
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label>Pays:</label>
-                                            <p class="form-control-static">{{ $data['pays']}}</p>
                                         </div>
                                     </div>
                                 </div>
